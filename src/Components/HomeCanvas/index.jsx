@@ -40,15 +40,21 @@ export function HomeCanvas(props) {
             }
         }
 
-        let bubble1 = new Bubble(200, 200, 35, 2);
-        bubble1.drawBubble(context);
-
-        let updateBubble = () => {
-            requestAnimationFrame(updateBubble)
-            bubble1.growBubble();
+        // let bubble1 = new Bubble(200, 200, 35, 2);
+        // bubble1.drawBubble(context);
+        
+        for (let i = 0; i < 25; i++){
+            let bubbles = new Bubble(Math.floor(Math.random() * homecanvas.width), Math.floor(Math.random() * homecanvas.height), 20, 3)
+            bubbles.drawBubble(context);
+            
+            let updateBubble = () => {
+                requestAnimationFrame(updateBubble)
+                bubbles.growBubble();
+            }
+            
+            updateBubble();
         }
 
-        updateBubble();
 
     }, [])
 
