@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-// import './style.css';
+import './style.css';
 
 export function HomeCanvas(props) {
 
@@ -8,53 +8,74 @@ export function HomeCanvas(props) {
     useEffect(() => {
         
         const homecanvas = canvasRef.current
-        const context = homecanvas.getContext('2d') 
+        const ctx = homecanvas.getContext('2d') 
         homecanvas.width = window.innerWidth
         homecanvas.height = window.innerHeight
 
+        let bubbleArray;
+
+        // create Bubble class & constructor
         class Bubble {
-            constructor(xpos, ypos, r, growth) {
-                this.xpos = xpos;
-                this.ypos = ypos;
-                this.r = r;
-                this.growth = growth;
-
-                this.radGrowth = 1 * this.growth;
+            constructor(x, y, directionX, directionY, size, color){
+                this.x = x;
+                this.y = y;
+                this.directionX = directionX;
+                this.directionY = directionY;
+                this.size = size;
+                this.color = color;
             }
-
-            drawBubble(context) {
-                context.beginPath();
-                context.arc(this.xpos, this.ypos, this.r, 0, Math.PI * 2, false)
-                context.stroke();
+            // add draw function
+            draw(){
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
             }
-
-            growBubble() {
-                context.clearRect(0, 0, homecanvas.width, homecanvas.height);
-                this.drawBubble(context);
-
-                if(this.r > 500) this.radGrowth = -this.radGrowth;
-
-                if(this.r < 10) this.radGrowth = -this.radGrowth;
-
-                this.r += this.radGrowth
+            // movement function
+            update(){
+                if(this.x + this.size >= homecanvas.width || this.x - this.size <= 0){
+                    this.directionX = -this.directionX;
+                }
+                if(this.y + this.size >= homecanvas.height || this.y - this.size <= 0){
+                    this.directionY = - this.directionY;
+                }
+                
+                this.x += this.directionX;
+                this.y += this.directionY;
+                this.draw();
             }
         }
+            // create the bubble array
+            function init(){
+                bubbleArray = [];
+                for (let i = 0; i < 50; i++) {
+                    let size = Math.random() * 50;
+                    let x = Math.random() * (homecanvas.width - size * 2);
+                    let y = Math.random() * (homecanvas.height - size * 3);
+                    let directionX = (Math.random() * 0.4) - 0.2;
+                    let directionY = (Math.random() * 0.4) - 0.2;
+                    let color = 'rgba(250, 250, 250, 0.6)';
 
-        // let bubble1 = new Bubble(200, 200, 35, 2);
-        // bubble1.drawBubble(context);
-        
-        for (let i = 0; i < 25; i++){
-            let bubbles = new Bubble(Math.floor(Math.random() * homecanvas.width), Math.floor(Math.random() * homecanvas.height), 20, 3)
-            bubbles.drawBubble(context);
-            
-            let updateBubble = () => {
-                requestAnimationFrame(updateBubble)
-                bubbles.growBubble();
+                    bubbleArray.push(new Bubble(x, y, directionX, directionY, size, color));
+                }
             }
-            
-            updateBubble();
-        }
+            // animation loop
+            function animate(){
+                requestAnimationFrame(animate);
+                ctx.clearRect(0, 0, innerWidth, innerHeight);
 
+                for (let i = 0; i < bubbleArray.length; i++){
+                    bubbleArray[i].update()
+                }
+            }
+        init();
+        animate();
+
+        window.addEventListener('resize', function(){
+            homecanvas.width = innerWidth;
+            homecanvas.height = innerHeight;
+            init();
+        })
 
     }, [])
 

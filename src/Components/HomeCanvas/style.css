@@ -1,0 +1,24 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: black;
+    color: white;
+    justify-content: center;
+}
+
+#homecanvas {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(black, darkblue, black);
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.9);
+}
